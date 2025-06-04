@@ -1,0 +1,13 @@
+### Main package ###
+Django
+Pillow
+
+### RESTful ###
+djangorestframework
+
+### Tool ###
+psycopg2-binary
+gunicorn
+
+### Database ###
+psycopg2
