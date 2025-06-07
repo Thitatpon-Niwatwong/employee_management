@@ -6,8 +6,16 @@ Pillow
 djangorestframework
 
 ### Tool ###
-psycopg2-binary
 gunicorn
 
 ### Database ###
-psycopg2
+psycopg2-binary
+
+### Filters ###
+django-filter
+
+### CORS ###
+django-cors-headers
+
+### Swagger ###
+drf-yasg

@@ -16,7 +16,8 @@ RUN apt-get update \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Copy project
 COPY . .
-
-CMD ["gunicorn", "your_django_project.wsgi:application", "--bind", "0.0.0.0:8000"]
