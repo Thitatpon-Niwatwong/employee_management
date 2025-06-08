@@ -5,8 +5,12 @@ echo "Running migrations..."
 python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
-echo "Creating normal user if not exists..."
-python manage.py shell << END
+if [ "$1" = "test" ]; then
+  echo "Running tests..." 
+  python manage.py test --keepdb
+else
+  echo "Creating normal user if not exists..."
+  python manage.py shell << END
 from django.contrib.auth import get_user_model
 User = get_user_model()
 if not User.objects.filter(username='${DJANGO_NORMAL_USERNAME}').exists():
@@ -17,10 +21,6 @@ if not User.objects.filter(username='${DJANGO_NORMAL_USERNAME}').exists():
     )
 END
 
-if [ "$1" = "test" ]; then
-  echo "Running tests..."
-  python manage.py test --keepdb
-else
   if [ "$ENVIRONMENT" = "production" ]; then
       echo "Starting Gunicorn for production..."
       gunicorn employee_management_system.wsgi:application --bind 0.0.0.0:8000 --workers 4

@@ -4,22 +4,22 @@ from employee.models import Status, Position, Employee, Department
 
 class StatusModelTest(TestCase):
     def test_create_status(self):
-        status = Status.objects.create(name="Active")
-        self.assertEqual(status.name, "Active")
+        status = Status.objects.create(name="in recruitment process")
+        self.assertEqual(status.name, "in recruitment process")
 
     def test_str_representation(self):
-        status = Status.objects.create(name="On Leave")
-        self.assertEqual(str(status), "On Leave")
+        status = Status.objects.create(name="resigned")
+        self.assertEqual(str(status), "resigned")
 
 
 class PositionModelTest(TestCase):
     def test_create_position(self):
-        pos = Position.objects.create(name="Designer", salary=35000.00)
-        self.assertEqual(pos.name, "Designer")
+        pos = Position.objects.create(name="UX Designer", salary=35000.00)
+        self.assertEqual(pos.name, "UX Designer")
         self.assertEqual(pos.salary, 35000.00)
 
     def test_update_salary(self):
-        pos = Position.objects.create(name="Tester", salary=30000)
+        pos = Position.objects.create(name="QA Tester", salary=30000)
         pos.salary = 40000
         pos.save()
         self.assertEqual(pos.salary, 40000)
@@ -27,26 +27,25 @@ class PositionModelTest(TestCase):
 
 class EmployeeModelTest(TestCase):
     def setUp(self):
-        self.status = Status.objects.create(name="Normal")
-        self.position = Position.objects.create(
-            name="Engineer", salary=45000.00)
+        self.status = Status.objects.create(name="normal")
+        self.position = Position.objects.create(name="Software Engineer", salary=45000.00)
 
     def test_create_employee_with_all_fields(self):
         emp = Employee.objects.create(
-            name="John Doe",
-            address="123 Somewhere",
+            name="Decha Phongthong",
+            address="123 Sukhumvit Road, Bangkok",
             is_manager=True,
             status=self.status,
             position=self.position
         )
-        self.assertEqual(emp.name, "John Doe")
-        self.assertEqual(emp.position.name, "Engineer")
+        self.assertEqual(emp.name, "Decha Phongthong")
+        self.assertEqual(emp.position.name, "Software Engineer")
         self.assertTrue(emp.is_manager)
 
     def test_create_employee_without_position(self):
         emp = Employee.objects.create(
-            name="Alice Smith",
-            address="No Position St",
+            name="Kanya Srisuwan",
+            address="88 Rama IV Road, Bangkok",
             is_manager=False,
             status=self.status
         )
@@ -55,16 +54,16 @@ class EmployeeModelTest(TestCase):
 
     def test_default_is_manager_false(self):
         emp = Employee.objects.create(
-            name="Temp",
-            address="Temp St",
+            name="Charlie Brown",
+            address="77 Phahonyothin Road, Bangkok",
             status=self.status
         )
         self.assertFalse(emp.is_manager)
 
     def test_employee_image_nullable(self):
         emp = Employee.objects.create(
-            name="Image Test",
-            address="Img St",
+            name="Nattapong Chaiyo",
+            address="99 Ladprao Road, Bangkok",
             is_manager=False,
             status=self.status
         )
@@ -72,46 +71,46 @@ class EmployeeModelTest(TestCase):
 
     def test_update_employee_status(self):
         emp = Employee.objects.create(
-            name="Update Me",
-            address="Old Addr",
+            name="Somchai Supap",
+            address="55 Silom Road, Bangkok",
             status=self.status
         )
-        new_status = Status.objects.create(name="Updated")
+        new_status = Status.objects.create(name="in probation period")
         emp.status = new_status
         emp.save()
-        self.assertEqual(emp.status.name, "Updated")
+        self.assertEqual(emp.status.name, "in probation period")
 
 
 class DepartmentModelTest(TestCase):
     def setUp(self):
-        self.status = Status.objects.create(name="Active")
-        self.position = Position.objects.create(name="Lead", salary=60000)
+        self.status = Status.objects.create(name="waiting for onboarding")
+        self.position = Position.objects.create(name="Team Lead", salary=60000)
         self.manager = Employee.objects.create(
-            name="Manager John",
-            address="456 Admin Rd",
+            name="Somsak Rojanasakul",
+            address="12 Ratchadaphisek Road, Bangkok",
             is_manager=True,
             status=self.status,
             position=self.position
         )
 
     def test_create_department_with_manager(self):
-        dept = Department.objects.create(name="HR", manager=self.manager)
-        self.assertEqual(dept.name, "HR")
-        self.assertEqual(dept.manager.name, "Manager John")
+        dept = Department.objects.create(name="Human Resources", manager=self.manager)
+        self.assertEqual(dept.name, "Human Resources")
+        self.assertEqual(dept.manager.name, "Somsak Rojanasakul")
 
     def test_create_department_without_manager(self):
-        dept = Department.objects.create(name="Unassigned")
+        dept = Department.objects.create(name="Unassigned Department")
         self.assertIsNone(dept.manager)
 
     def test_update_department_manager(self):
         new_manager = Employee.objects.create(
-            name="New Boss",
-            address="999 New Rd",
+            name="Panida Wongchai",
+            address="88 Sathorn Road, Bangkok",
             is_manager=True,
             status=self.status,
             position=self.position
         )
-        dept = Department.objects.create(name="Tech", manager=self.manager)
+        dept = Department.objects.create(name="Technology", manager=self.manager)
         dept.manager = new_manager
         dept.save()
-        self.assertEqual(dept.manager.name, "New Boss")
+        self.assertEqual(dept.manager.name, "Panida Wongchai")

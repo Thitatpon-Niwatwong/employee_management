@@ -16,6 +16,3 @@ django-filter
 
 ### CORS ###
 django-cors-headers
-
-### Swagger ###
-drf-yasg

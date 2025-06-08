@@ -37,23 +37,23 @@ class APITestSetup(APITestCase):
         self.token = Token.objects.create(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
 
-        self.status = Status.objects.create(name="Active")
-        self.position = Position.objects.create(name="Developer", salary=50000.00)
+        self.status = Status.objects.create(name="normal")
+        self.position = Position.objects.create(name="Software Developer", salary=50000.00)
 
         self.employee = Employee.objects.create(
-            name="Manager",
-            address="123 Admin St",
+            name="Anan Krahan",
+            address="123 Sukhumvit Road, Wattana District, Bangkok",
             position=self.position,
             status=self.status,
             is_manager=True
         )
 
-        self.department = Department.objects.create(name="IT", manager=self.employee)
+        self.department = Department.objects.create(name="Information Technology", manager=self.employee)
 
 
 class StatusAPITests(APITestSetup):
     def test_create_status(self):
-        response = self.client.post(reverse('status-list'), {"name": "On Leave"})
+        response = self.client.post(reverse('status-list'), {"name": "resigned"})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_status_list(self):
@@ -61,7 +61,7 @@ class StatusAPITests(APITestSetup):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_status(self):
-        response = self.client.put(reverse('status-detail', args=[self.status.id]), {"name": "Updated"})
+        response = self.client.put(reverse('status-detail', args=[self.status.id]), {"name": "in probation period"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_status(self):
@@ -71,7 +71,7 @@ class StatusAPITests(APITestSetup):
 
 class PositionAPITests(APITestSetup):
     def test_create_position(self):
-        response = self.client.post(reverse('position-list'), {"name": "Tester", "salary": 45000.00})
+        response = self.client.post(reverse('position-list'), {"name": "Quality Assurance", "salary": 45000.00})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_position_list(self):
@@ -80,7 +80,7 @@ class PositionAPITests(APITestSetup):
 
     def test_update_position(self):
         response = self.client.put(reverse('position-detail', args=[self.position.id]), {
-            "name": "Updated Dev",
+            "name": "Senior Developer",
             "salary": 60000.00
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -93,7 +93,7 @@ class PositionAPITests(APITestSetup):
 class DepartmentAPITests(APITestSetup):
     def test_create_department(self):
         response = self.client.post(reverse('department-list'), {
-            "name": "HR",
+            "name": "Human Resources",
             "manager": self.employee.id
         })
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -104,7 +104,7 @@ class DepartmentAPITests(APITestSetup):
 
     def test_update_department(self):
         response = self.client.put(reverse('department-detail', args=[self.department.id]), {
-            "name": "Tech Department",
+            "name": "Technology Division",
             "manager": self.employee.id
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -117,22 +117,22 @@ class DepartmentAPITests(APITestSetup):
 class EmployeeAPITests(APITestSetup):
     def test_create_employee(self):
         response = self.client.post(reverse('employee-list'), {
-            "name": "Jane Smith",
-            "address": "789 Main St",
+            "name": "Jarupat Srisuwan",
+            "address": "789 Ngamwongwan Road, Mueang District, Nonthaburi",
             "position_id": self.position.id,
             "status_id": self.status.id,
             "department_id": self.department.id,
             "is_manager": False
         })
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['name'], "Jane Smith")
+        self.assertEqual(response.data['name'], "Jarupat Srisuwan")
 
     def test_get_employee_list(self):
         response = self.client.get(reverse('employee-list'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_search_employee(self):
-        response = self.client.get(reverse('employee-list'), {'search': 'Manager'})
+        response = self.client.get(reverse('employee-list'), {'search': 'Anan Krahan'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
 
@@ -142,15 +142,15 @@ class EmployeeAPITests(APITestSetup):
 
     def test_update_employee(self):
         response = self.client.put(reverse('employee-detail', args=[self.employee.id]), {
-            "name": "New Manager",
-            "address": "456 Changed St",
+            "name": "Nopparat Jareonwongsak",
+            "address": "456 Ladprao Soi 101, Bangkapi, Bangkok",
             "position_id": self.position.id,
             "status_id": self.status.id,
             "department_id": self.department.id,
             "is_manager": True
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], "New Manager")
+        self.assertEqual(response.data['name'], "Nopparat Jareonwongsak")
 
     def test_partial_update_employee(self):
         response = self.client.patch(reverse('employee-detail', args=[self.employee.id]), {
@@ -167,8 +167,8 @@ class EmployeeAPITests(APITestSetup):
         image = generate_test_image()
 
         response = self.client.post(reverse('employee-list'), {
-            "name": "Image Tester",
-            "address": "Pic Street",
+            "name": "Suda Thongchai",
+            "address": "Phahonyothin Road, Chatuchak, Bangkok",
             "position_id": self.position.id,
             "status_id": self.status.id,
             "is_manager": False,
@@ -176,7 +176,6 @@ class EmployeeAPITests(APITestSetup):
             "image": image
         }, format='multipart')
 
-        print("❗ RESPONSE:", response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("employee_images/", response.data["image"])
 
@@ -185,9 +184,10 @@ class EmployeeAPITests(APITestSetup):
         response = self.client.get(reverse('employee-list'))
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 def generate_test_image():
-        image = Image.new('RGB', (100, 100), color='blue')
-        byte_io = BytesIO()
-        image.save(byte_io, 'JPEG')
-        byte_io.seek(0)
-        return SimpleUploadedFile("test.jpg", byte_io.read(), content_type="image/jpeg")
+    image = Image.new('RGB', (100, 100), color='blue')
+    byte_io = BytesIO()
+    image.save(byte_io, 'JPEG')
+    byte_io.seek(0)
+    return SimpleUploadedFile("test.jpg", byte_io.read(), content_type="image/jpeg")

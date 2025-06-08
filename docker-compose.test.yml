@@ -14,9 +14,7 @@ services:
   db:
     image: postgres:17
     volumes:
-      - postgres_data_test:/var/lib/postgresql/data/
+      - type: tmpfs
+        target: /var/lib/postgresql/data/
     env_file:
       - .env.test
-
-volumes:
-  postgres_data_test:
