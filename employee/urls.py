@@ -10,10 +10,10 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 
 router = DefaultRouter()
-router.register(r'employees', EmployeeViewSet)
-router.register(r'departments', DepartmentViewSet)
-router.register(r'positions', PositionViewSet)
-router.register(r'statuses', StatusViewSet)
+router.register(r'employee', EmployeeViewSet)
+router.register(r'department', DepartmentViewSet)
+router.register(r'position', PositionViewSet)
+router.register(r'status', StatusViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

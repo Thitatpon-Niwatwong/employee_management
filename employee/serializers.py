@@ -25,8 +25,18 @@ class EmployeeSerializer(serializers.ModelSerializer):
     status_id = serializers.PrimaryKeyRelatedField(
         queryset=Status.objects.all(), source='status', write_only=True
     )
+    position = PositionSerializer(read_only=True)
+    position_id = serializers.PrimaryKeyRelatedField(
+        queryset=Position.objects.all(), source='position', write_only=True
+    )
+    department = DepartmentSerializer(read_only=True)
+    department_id = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(), source='department', write_only=True
+    )
     image = serializers.ImageField(required=False)
 
     class Meta:
         model = Employee
         fields = '__all__'
+
+
